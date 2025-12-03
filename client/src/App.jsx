@@ -1,9 +1,12 @@
 import React from "react";
-
+import { ForgotPasswordScreen } from "./pages/auth/ForgotPassword";
+import { BrowserRoute as Router, Router } from "react-router-dom";
 function App() {
   return (
     <div>
-      <h1 className="bg-red-700 text-center">Hello World</h1>
+      <ForgotPasswordScreen />
+
+      <Router></Router>
     </div>
   );
 }
