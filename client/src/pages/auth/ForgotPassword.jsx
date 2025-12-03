@@ -1,254 +1,236 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
-import { loginContent } from "../../utils/data";
 import { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { motion } from "framer-motion";
+import { Mail, GraduationCap, ArrowLeft, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+const forgotPasswordSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+});
 
-export const ForgotPasswordScreen = ({ onBackToLogin }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+const ForgotPassword = () => {
+  const [submitted, setSubmitted] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
-
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email(loginContent.validation.emailInvalid)
-      .required(loginContent.validation.emailRequired),
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      setIsLoading(true);
-      console.log("Reset email:", values.email);
+  const navigate = useNavigate();
+  const handleSubmit = (values, { setSubmitting }) => {
+    setTimeout(() => {
+      console.log("Password reset requested for:", values.email);
       setSubmittedEmail(values.email);
-      setTimeout(() => {
-        setIsLoading(false);
-        setIsSubmitted(true);
-      }, 1500);
-    },
-  });
+      setSubmitted(true);
+      setSubmitting(false);
+    }, 1000);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white p-8 lg:p-16 flex-col justify-between relative overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400 rounded-full filter blur-3xl opacity-20 translate-y-1/2 -translate-x-1/2" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen flex items-center justify-center p-6 sm:p-12 bg-gradient-to-br from-gray-50 to-gray-100"
+    >
+      <div className="w-full max-w-md">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="flex items-center justify-center gap-3 mb-8"
+        >
+          <div className="p-2 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl">
+            <GraduationCap size={32} className="text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">EduManage</h1>
+            <p className="text-sm text-gray-600">School Management</p>
+          </div>
+        </motion.div>
 
-        <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12"
-          >
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-              Password Recovery
-            </h1>
-            <p className="text-lg text-blue-100 leading-relaxed">
-              We'll help you regain access to your School Funds Record System
-              account in just a few steps.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-4 bg-white/10 backdrop-blur-sm p-6 rounded-lg"
-          >
-            <div className="flex items-start gap-3">
-              <CheckCircle className="h-6 w-6 text-green-300 flex-shrink-0 mt-1" />
-              <div>
-                <p className="font-semibold mb-1">Quick & Secure</p>
-                <p className="text-blue-100 text-sm">
-                  Your account will be protected with a secure reset link
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="bg-white rounded-2xl shadow-xl p-8 sm:p-10"
+        >
+          {!submitted ? (
+            <>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                  Reset Password
+                </h2>
+                <p className="text-gray-600">
+                  Enter your email address and we'll send you a link to reset
+                  your password
                 </p>
               </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="h-6 w-6 text-green-300 flex-shrink-0 mt-1" />
-              <div>
-                <p className="font-semibold mb-1">Instant Delivery</p>
-                <p className="text-blue-100 text-sm">
-                  Reset instructions delivered to your email immediately
+
+              <Formik
+                initialValues={{ email: "" }}
+                validationSchema={forgotPasswordSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ isSubmitting, touched, errors }) => (
+                  <Form className="space-y-6">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Email Address
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Mail className="text-gray-400" size={20} />
+                        </div>
+                        <Field
+                          type="email"
+                          name="email"
+                          id="email"
+                          className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                            touched.email && errors.email
+                              ? "border-red-500 bg-red-50"
+                              : "border-gray-300 bg-gray-50 hover:bg-white"
+                          }`}
+                          placeholder="your.email@school.com"
+                        />
+                      </div>
+                      <ErrorMessage
+                        name="email"
+                        component="div"
+                        className="mt-2 text-sm text-red-600 flex items-center gap-1"
+                      />
+                    </motion.div>
+
+                    <motion.button
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg
+                            className="animate-spin h-5 w-5"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Sending Link...
+                        </span>
+                      ) : (
+                        "Send Reset Link"
+                      )}
+                    </motion.button>
+                  </Form>
+                )}
+              </Formik>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                onClick={() => navigate("/")}
+                className="w-full mt-6 flex items-center justify-center cursor-pointer gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium"
+              >
+                <ArrowLeft size={18} />
+                Back to Sign In
+              </motion.button>
+            </>
+          ) : (
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  delay: 0.3,
+                  duration: 0.5,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+                className="flex justify-center mb-6"
+              >
+                <div className="p-4 bg-green-100 rounded-full">
+                  <CheckCircle size={48} className="text-green-600" />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="text-center"
+              >
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Check Your Email
+                </h2>
+                <p className="text-gray-600 mb-2">
+                  We've sent a password reset link to:
                 </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+                <p className="font-semibold text-gray-800 mb-6 break-all">
+                  {submittedEmail}
+                </p>
+                <p className="text-sm text-gray-500 mb-8">
+                  If you don't see the email, please check your spam folder. The
+                  link will expire in 24 hours.
+                </p>
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+                onClick={onBack}
+                className="w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium bg-blue-50 hover:bg-blue-100 py-3 rounded-xl"
+              >
+                <ArrowLeft size={18} />
+                Back to Sign In
+              </motion.button>
+            </>
+          )}
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="relative z-10 mt-8 lg:mt-0"
+          transition={{ delay: 1 }}
+          className="mt-8 text-center"
         >
-          <p className="text-sm text-blue-200">
-            Developed with care by{" "}
+          <p className="text-sm text-gray-500">
+            Powered by{" "}
             <a
-              href={`mailto:${loginContent.developer.email}`}
-              className="font-semibold text-white hover:text-blue-100 transition-colors underline decoration-2 underline-offset-2"
+              href="https://codewith.ab"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
             >
-              {loginContent.developer.brand}
+              CodeWith.AB
             </a>
           </p>
         </motion.div>
-      </motion.div>
-
-      <div className="w-full lg:w-1/2 bg-gray-50 lg:bg-white p-6 sm:p-8 lg:p-16 flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          {!isSubmitted ? (
-            <motion.div
-              key="form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="w-full lg:max-w-md bg-white lg:bg-transparent rounded-xl lg:rounded-none shadow-sm lg:shadow-none border border-gray-200 lg:border-none p-6 lg:p-0"
-            >
-              <motion.button
-                onClick={onBackToLogin}
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-8 transition-colors group"
-                whileHover={{ x: -4 }}
-              >
-                <ArrowLeft className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                {loginContent.forgotPassword.backToLogin}
-              </motion.button>
-
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  {loginContent.forgotPassword.title}
-                </h2>
-                <p className="text-gray-600">
-                  {loginContent.forgotPassword.subtitle}
-                </p>
-              </div>
-
-              <form onSubmit={formik.handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {loginContent.forgotPassword.emailLabel}
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values.email}
-                      className={`block w-full pl-10 pr-3 py-3 border ${
-                        formik.touched.email && formik.errors.email
-                          ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                          : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                      } rounded-lg focus:outline-none focus:ring-2 transition-colors`}
-                      placeholder={loginContent.forgotPassword.emailPlaceholder}
-                    />
-                  </div>
-                  {formik.touched.email && formik.errors.email && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-2 text-sm text-red-600"
-                    >
-                      {formik.errors.email}
-                    </motion.p>
-                  )}
-                </div>
-
-                <motion.button
-                  type="submit"
-                  disabled={isLoading}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    loginContent.forgotPassword.submitButton
-                  )}
-                </motion.button>
-              </form>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="w-full lg:max-w-md bg-white lg:bg-transparent rounded-xl lg:rounded-none shadow-sm lg:shadow-none border border-gray-200 lg:border-none p-6 lg:p-0 text-center"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  duration: 0.4,
-                  delay: 0.2,
-                  type: "spring",
-                  stiffness: 100,
-                }}
-                className="mb-6 flex justify-center"
-              >
-                <div className="bg-green-100 p-4 rounded-full">
-                  <CheckCircle className="h-12 w-12 text-green-600" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-              >
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  {loginContent.forgotPassword.successMessage}
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  {loginContent.forgotPassword.successDescription}
-                </p>
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.6 }}
-                  className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8"
-                >
-                  <p className="text-sm text-blue-900 font-medium break-all">
-                    {submittedEmail}
-                  </p>
-                </motion.div>
-
-                <motion.button
-                  onClick={onBackToLogin}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                  {loginContent.forgotPassword.backToLogin}
-                </motion.button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+export default ForgotPassword;

@@ -1,13 +1,38 @@
-import React from "react";
-import { ForgotPasswordScreen } from "./pages/auth/ForgotPassword";
-import { BrowserRoute as Router, Router } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import PrivateRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 function App() {
   return (
-    <div>
-      <ForgotPasswordScreen />
-
-      <Router></Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <div>Dashboard Page - Protected</div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
