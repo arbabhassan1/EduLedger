@@ -4,6 +4,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import PrivateRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import UpdatePassword from "./pages/auth/UpdatePassword";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 function App() {
   return (
     <Router>
@@ -21,7 +22,7 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <div>Dashboard Page - Protected</div>
+              <DashboardPage />
             </PrivateRoute>
           }
         />
