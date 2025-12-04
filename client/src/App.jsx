@@ -3,6 +3,7 @@ import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import PrivateRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import UpdatePassword from "./pages/auth/UpdatePassword";
 function App() {
   return (
     <Router>
@@ -15,6 +16,7 @@ function App() {
             </PublicRoute>
           }
         />
+        <Route path="/update-password" element={<UpdatePassword />} />
         <Route
           path="/dashboard"
           element={

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import supabase from "../utils/supabase";
-
+import Loading from "../components/Loading";
 const PrivateRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -24,7 +24,7 @@ const PrivateRoute = ({ children }) => {
     fetchUser();
   }, []);
 
-  if (loading) return <div>Loading...</div>; // optional loading spinner
+  if (loading) return <Loading />; // optional loading spinner
 
   if (!user) {
     return <Navigate to="/" />; // redirect to login if not authenticated

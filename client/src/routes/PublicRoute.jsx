@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import supabase from "../utils/supabase";
+import Loading from "../components/Loading";
 const PublicRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -21,7 +22,7 @@ const PublicRoute = ({ children }) => {
     fetchUser();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
 
   if (user) return <Navigate to="/dashboard" />; // redirect if logged in
 

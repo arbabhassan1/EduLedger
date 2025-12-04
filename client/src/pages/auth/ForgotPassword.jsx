@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { motion } from "framer-motion";
 import { Mail, GraduationCap, ArrowLeft, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../utils/supabase";
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
@@ -14,13 +15,25 @@ const ForgotPassword = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
   const navigate = useNavigate();
-  const handleSubmit = (values, { setSubmitting }) => {
-    setTimeout(() => {
-      console.log("Password reset requested for:", values.email);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(
+        values.email,
+        {
+          redirectTo: import.meta.env.VITE_APP_RESET_REDIRECT_URL,
+        }
+      );
+
+      if (error) {
+        console.error("Error sending password reset email:", error.message);
+      } else {
+        console.log("Password reset requested for:", values.email);
+      }
+    } finally {
+      setSubmitting(false);
       setSubmittedEmail(values.email);
       setSubmitted(true);
-      setSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -200,8 +213,8 @@ const ForgotPassword = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                onClick={onBack}
-                className="w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium bg-blue-50 hover:bg-blue-100 py-3 rounded-xl"
+                className="w-full flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 transition-colors font-medium bg-blue-50 hover:bg-blue-100 py-3 rounded-xl cursor-pointer"
+                onClick={() => navigate("/")}
               >
                 <ArrowLeft size={18} />
                 Back to Sign In
